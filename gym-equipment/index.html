@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每周 5 练健身计划</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            padding: 56px 20px 32px;
+            color: #fff;
+        }
+
+        header h1 {
+            font-size: 2.4rem;
+            letter-spacing: 4px;
+            margin-bottom: 14px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        header p {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            letter-spacing: 1px;
+        }
+
+        .principles {
+            max-width: 1200px;
+            margin: 8px auto 0;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .principles span {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .card-top {
+            padding: 24px 24px 0;
+            position: relative;
+        }
+
+        .card-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .card-body {
+            padding: 0 24px 24px;
+        }
+
+        .card-body .day {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+
+        .card-body .title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #e94560;
+            margin-bottom: 8px;
+        }
+
+        .card-body .sub {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .card-body .meta {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .card-body .meta span {
+            background: #f1f1f5;
+            color: #444;
+            font-size: 0.78rem;
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .card-bottom {
+            background: #f7f7fb;
+            padding: 12px 24px;
+            color: #888;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.82);
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 760px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            margin: auto;
+        }
+
+        .modal-head {
+            padding: 28px 32px 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #302b63 100%);
+            color: #fff;
+        }
+
+        .modal-head .day {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .modal-head .title {
+            font-size: 1.1rem;
+            color: #ffd166;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .modal-head .sub {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .modal-body {
+            padding: 24px 32px 32px;
+        }
+
+        .modal-body section {
+            margin-bottom: 24px;
+        }
+
+        .modal-body section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 999px;
+            letter-spacing: 1px;
+        }
+
+        ul.warmup-list {
+            list-style: none;
+            padding-left: 4px;
+        }
+
+        ul.warmup-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+        .ws-gif {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            flex-shrink: 0;
+            background: #eee;
+            border: 1px solid #eee;
+        }
+
+        .ex-card {
+            background: #f8f8fb;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .ex-card-head {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .ex-card-body {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .ex-card-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .ex-row {
+            display: flex;
+            gap: 10px;
+            align-items: baseline;
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .ex-label {
+            flex-shrink: 0;
+            width: 62px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #999;
+            letter-spacing: 1px;
+        }
+
+        .ex-value {
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .ex-tip {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed #ddd;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #666;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        ul.stretch-list {
+            list-style: none;
+            padding-left: 4px;
+        }
+
+        ul.stretch-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            color: #fff;
+            font-size: 2.2rem;
+            cursor: pointer;
+            line-height: 1;
+            opacity: 0.85;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+        }
+
+        .ex-gif {
+            width: 128px;
+            height: 128px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #eee;
+            cursor: zoom-in;
+            flex-shrink: 0;
+            border: 1px solid #e5e5ea;
+        }
+
+        .img-modal {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .img-modal.show {
+            display: flex;
+        }
+
+        .img-modal img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .img-modal .img-close {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            color: #fff;
+            font-size: 2.4rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        @media (max-width: 640px) {
+            .ex-gif {
+                width: 96px;
+                height: 96px;
+            }
+
+            .ex-card-body {
+                gap: 10px;
+            }
+
+            .ex-label {
+                width: 56px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            header h1 {
+                font-size: 1.6rem;
+                letter-spacing: 2px;
+            }
+
+            header p {
+                font-size: 0.95rem;
+            }
+
+            .principles span {
+                font-size: 0.78rem;
+                padding: 6px 12px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 24px 16px 40px;
+            }
+
+            .modal {
+                padding: 16px;
+            }
+
+            .modal-body {
+                padding: 20px 18px 24px;
+            }
+
+            .modal-head {
+                padding: 24px 18px 16px;
+            }
+
+            .modal-close {
+                right: 18px;
+                top: 14px;
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>每周 5 练健身计划</h1>
+        <p>推拉腿循环 + 细节分化 · 周一至周五 · 每次约 60 分钟</p>
+    </header>
+
+    <div class="principles">
+        <span>周一 推力日</span>
+        <span>周二 拉力日</span>
+        <span>周三 腿部日</span>
+        <span>周四 推力日</span>
+        <span>周五 拉力日</span>
+        <span>周末 完全休息</span>
+    </div>
+
+    <main class="grid" id="plan-grid"></main>
+
+    <footer>热身 5 分钟 + 力量 45-50 分钟 + 拉伸 5-10 分钟</footer>
+
+    <div class="modal" id="modal" onclick="closeModal(event)">
+        <span class="modal-close">&times;</span>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-head">
+                <div class="day" id="m-day"></div>
+                <div class="title" id="m-title"></div>
+                <div class="sub" id="m-sub"></div>
+            </div>
+            <div class="modal-body" id="m-body"></div>
+        </div>
+    </div>
+
+    <div class="img-modal" id="img-modal" onclick="closeImgModal(event)">
+        <span class="img-close">&times;</span>
+        <img id="img-modal-img" src="" alt="">
+    </div>
+
+    <script>
+        const days = [
+            {
+                day: "周一",
+                title: "推力日",
+                sub: "胸 + 肩前中束 + 三头",
+                color: "#2563eb",
+                warmup: [
+                    { t: "跑步机 —— 2 分钟，提升心率", gif: "images/exercises/walk-treadmill.gif" },
+                    { t: "肩关节环绕（前后各 10 圈）", gif: "images/exercises/Shoulder_Circles.gif" },
+                    { t: "胸椎旋转（每侧 5 次）", gif: "images/exercises/Torso_Rotation.gif" },
+                    { t: "手臂交叉摆动（前后各 10 次）", gif: "" },
+                    { t: "手腕脚踝激活（各 10 秒）", gif: "images/exercises/Ankle_Circles.gif" }
+                ],
+                exercises: [
+                    { name: "坐式推胸器", sets: "4 × 8-12", rest: "90 秒", tip: "全行程，肘微屈不锁死", gif: "images/exercises/chest-press.gif" },
+                    { name: "举肩器（推举）", sets: "3 × 10-12", rest: "60 秒", tip: "坐姿 90°，肘略低于肩", gif: "images/exercises/shoulder-press.gif" },
+                    { name: "助力单双杠（双杠臂屈伸）", sets: "3 × 力竭", rest: "60 秒", tip: "身体前倾，感受胸下沿", gif: "images/exercises/assisted-dip.gif" },
+                    { name: "哑铃侧平举", sets: "3 × 12-15", rest: "45 秒", tip: "小重量高次数，离心慢放", gif: "images/exercises/lateral-raise.gif" },
+                    { name: "绳索下压或钻石俯卧撑", sets: "3 × 12-15", rest: "45 秒", tip: "专注三头收缩", gif: "images/exercises/triceps-pushdown.gif" }
+                ],
+                stretch: [
+                    { t: "胸大肌拉伸：单手扶墙，身体向前转，每侧 30 秒", gif: "images/exercises/Behind_Head_Chest_Stretch.gif" },
+                    { t: "三头肌拉伸：手臂过头屈肘，另一手辅助，每侧 30 秒", gif: "images/exercises/Triceps_Stretch.gif" },
+                    { t: "三角肌前束拉伸：手臂后伸，每侧 30 秒", gif: "images/exercises/Seated_Front_Deltoid.gif" }
+                ]
+            },
+            {
+                day: "周二",
+                title: "拉力日",
+                sub: "背 + 后肩 + 二头",
+                color: "#16a34a",
+                warmup: [
+                    { t: "椭圆机 —— 2 分钟", gif: "images/exercises/elliptical.gif" },
+                    { t: "猫牛式（脊柱逐节活动，5 次）", gif: "images/exercises/Cat_Stretch.gif" },
+                    { t: "肩胛骨后缩激活（站立，双臂后夹，10 次）", gif: "images/exercises/upper-back-stretch.gif" },
+                    { t: "手臂画圈（前后各 10 圈）", gif: "images/exercises/Arm_Circles.gif" },
+                    { t: "躯干侧屈（每侧 5 次）", gif: "images/exercises/Standing_Lateral_Stretch.gif" }
+                ],
+                exercises: [
+                    { name: "高拉背器（高位下拉）", sets: "4 × 8-12", rest: "90 秒", tip: "宽握，下拉至锁骨，顶峰收缩", gif: "images/exercises/lat-pulldown.gif" },
+                    { name: "坐式低拉背器（坐姿划船）", sets: "4 × 10-12", rest: "60 秒", tip: "V 把拉至上腹，挺胸沉肩", gif: "images/exercises/seated-row.gif" },
+                    { name: "反飞鸟器", sets: "3 × 12-15", rest: "45 秒", tip: "俯身固定，肘微屈，挤压肩胛", gif: "images/exercises/reverse-fly.gif" },
+                    { name: "助力单双杠（引体向上）", sets: "3 × 力竭", rest: "60 秒", tip: "正手宽握，逐步减少助力", gif: "images/exercises/assisted-pullup.gif" },
+                    { name: "哑铃弯举", sets: "3 × 10-12", rest: "45 秒", tip: "站姿交替，手腕中立", gif: "images/exercises/dumbbell-curl.gif" }
+                ],
+                stretch: [
+                    { t: "背阔肌拉伸：跪姿，双手前伸趴地，臀部后坐，保持 30 秒", gif: "images/exercises/Overhead_Lat.gif" },
+                    { t: "二头肌拉伸：手臂伸直掌心朝后，另一手辅助，每侧 30 秒", gif: "images/exercises/Standing_Biceps_Stretch.gif" },
+                    { t: "三角肌后束拉伸：手臂横过胸前，另一手拉肘，每侧 30 秒", gif: "images/exercises/Shoulder_Stretch.gif" }
+                ]
+            },
+            {
+                day: "周三",
+                title: "腿部日",
+                sub: "股四 + 腘绳 + 臀 + 小腿",
+                color: "#9333ea",
+                warmup: [
+                    { t: "划船机 —— 2 分钟", gif: "" },
+                    { t: "髋关节绕环（前后各 10 圈）", gif: "images/exercises/Standing_Hip_Circles.gif" },
+                    { t: "弓步转体（每侧 5 次）", gif: "images/exercises/world-greatest-stretch.gif" },
+                    { t: "高抬腿（原地 20 次）", gif: "images/exercises/high-knees.gif" },
+                    { t: "踝关节激活（脚尖点地，左右各 10 次）", gif: "images/exercises/Ankle_Circles.gif" }
+                ],
+                exercises: [
+                    { name: "深蹲（自由或高脚杯）", sets: "4 × 8-10", rest: "120 秒", tip: "核心收紧，膝盖对准脚尖", gif: "images/exercises/squat.gif" },
+                    { name: "伸屈腿器（先腿弯举后腿屈伸）", sets: "各 3 × 12-15", rest: "60 秒", tip: "弯举勾脚尖离心 3 秒，屈伸顶峰收缩", gif: "images/exercises/leg-curl.gif" },
+                    { name: "大腿内外侧器", sets: "各 3 × 15-20", rest: "45 秒", tip: "外展臀发力，内收大腿内侧发力", gif: "images/exercises/hip-abduction.gif" },
+                    { name: "罗马椅（背伸）", sets: "3 × 12-15", rest: "60 秒", tip: "髋部贴垫，上身悬空缓慢抬起", gif: "images/exercises/hyperextension.gif" },
+                    { name: "哑铃提踵", sets: "3 × 20", rest: "30 秒", tip: "站姿或坐姿，找小腿泵感", gif: "images/exercises/calf-raise.gif" }
+                ],
+                stretch: [
+                    { t: "股四头肌拉伸：站立屈膝，手抓脚踝，每侧 30 秒", gif: "images/exercises/Quad_Stretch.gif" },
+                    { t: "腘绳肌拉伸：坐姿，一腿伸直勾脚尖，身体前倾，每侧 30 秒", gif: "images/exercises/seated-hamstring-stretch.gif" },
+                    { t: "臀部拉伸：仰卧翘二郎腿，抱膝向胸口拉，每侧 30 秒", gif: "images/exercises/glute-stretch.gif" },
+                    { t: "小腿拉伸：弓步推墙，后腿伸直脚跟踩地，每侧 30 秒", gif: "images/exercises/calf-stretch.gif" }
+                ]
+            },
+            {
+                day: "周四",
+                title: "推力日",
+                sub: "侧重肩部 + 胸部细节",
+                color: "#ea580c",
+                warmup: [
+                    { t: "动感单车 —— 2 分钟", gif: "images/exercises/stationary-bike.gif" },
+                    { t: "肩关节环绕（前后各 10 圈）", gif: "images/exercises/Shoulder_Circles.gif" },
+                    { t: "胸椎旋转（每侧 5 次）", gif: "images/exercises/Torso_Rotation.gif" },
+                    { t: "手臂前后摆荡（各 10 次）", gif: "images/exercises/Arm_Circles.gif" },
+                    { t: "手腕激活（握拳张开 10 次）", gif: "images/exercises/Wrist_Circles.gif" }
+                ],
+                exercises: [
+                    { name: "哑铃上斜卧推", sets: "4 × 8-12", rest: "90 秒", tip: "凳子 30°，肘 75° 夹角", gif: "images/exercises/incline-bench-press.gif" },
+                    { name: "举肩器（推举，可选颈后）", sets: "3 × 10-12", rest: "60 秒", tip: "若肩灵活，尝试颈后变式", gif: "images/exercises/shoulder-press.gif" },
+                    { name: "坐式推胸器（高手柄位）", sets: "3 × 12-15", rest: "60 秒", tip: "手柄最高档，刺激上胸", gif: "images/exercises/chest-press.gif" },
+                    { name: "助力单双杠（双杠臂屈伸）", sets: "3 × 力竭", rest: "45 秒", tip: "身体直立刺激三头，前倾刺激胸下沿", gif: "images/exercises/assisted-dip.gif" },
+                    { name: "面拉（龙门架或弹力带）", sets: "3 × 15-20", rest: "45 秒", tip: "改善圆肩，强化后束", gif: "images/exercises/face-pull.gif" }
+                ],
+                stretch: [
+                    { t: "胸大肌拉伸：单手扶墙，身体向前转，每侧 30 秒", gif: "images/exercises/Behind_Head_Chest_Stretch.gif" },
+                    { t: "三角肌前束拉伸：手臂后伸，每侧 30 秒", gif: "images/exercises/Seated_Front_Deltoid.gif" },
+                    { t: "肩袖拉伸：手臂横过胸前，另一手辅助，每侧 30 秒", gif: "images/exercises/Shoulder_Stretch.gif" }
+                ]
+            },
+            {
+                day: "周五",
+                title: "拉力日",
+                sub: "侧重背部厚度 + 核心",
+                color: "#92400e",
+                warmup: [
+                    { t: "划船机 —— 2 分钟", gif: "" },
+                    { t: "猫牛式（5 次）", gif: "images/exercises/Cat_Stretch.gif" },
+                    { t: "肩胛后缩激活（10 次）", gif: "images/exercises/upper-back-stretch.gif" },
+                    { t: "躯干旋转（每侧 5 次）", gif: "images/exercises/Torso_Rotation.gif" },
+                    { t: "腹式呼吸激活（吸气鼓腹，呼气收腹，5 次）", gif: "" }
+                ],
+                exercises: [
+                    { name: "坐式低拉背器（坐姿划船）", sets: "4 × 8-10", rest: "90 秒", tip: "V 把拉至下腹，身体略后仰", gif: "images/exercises/seated-row.gif" },
+                    { name: "高拉背器（高位下拉，反握窄距）", sets: "3 × 10-12", rest: "60 秒", tip: "反握窄距，刺激背阔下部", gif: "images/exercises/lat-pulldown.gif" },
+                    { name: "罗马椅（背伸）", sets: "4 × 12-15", rest: "60 秒", tip: "可手持哑铃片增加阻力", gif: "images/exercises/hyperextension.gif" },
+                    { name: "双杠提膝器", sets: "3 × 15-20", rest: "45 秒", tip: "身体稳定，提膝至胸，控制下放", gif: "images/exercises/captains-chair.gif" },
+                    { name: "平板支撑（瑜伽垫）", sets: "3 × 45-60 秒", rest: "30 秒", tip: "骨盆后倾，腹部全程收紧", gif: "images/exercises/plank.gif" }
+                ],
+                stretch: [
+                    { t: "背阔肌拉伸：跪姿，双手前伸趴地，臀部后坐，保持 30 秒", gif: "images/exercises/Overhead_Lat.gif" },
+                    { t: "竖脊肌拉伸：婴儿式（跪姿，额头触地，手臂前伸），保持 30 秒", gif: "images/exercises/Childs_Pose.gif" },
+                    { t: "腹直肌拉伸：俯卧，手掌撑起上半身，保持 30 秒", gif: "" },
+                    { t: "全身放松：仰卧抱膝滚动，来回 10 次", gif: "images/exercises/Hug_Knees_To_Chest.gif" }
+                ]
+            }
+        ];
+
+        const grid = document.getElementById("plan-grid");
+        const modal = document.getElementById("modal");
+        const mDay = document.getElementById("m-day");
+        const mTitle = document.getElementById("m-title");
+        const mSub = document.getElementById("m-sub");
+        const mBody = document.getElementById("m-body");
+        const imgModal = document.getElementById("img-modal");
+        const imgModalImg = document.getElementById("img-modal-img");
+
+        function renderCards() {
+            days.forEach((item) => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <div class="card-top">
+                        <span class="card-tag" style="background:${item.color}">${item.day}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="day">${item.day}</div>
+                        <div class="title">${item.title}</div>
+                        <div class="sub">${item.sub}</div>
+                        <div class="meta">
+                            <span>${item.exercises.length} 个动作</span>
+                            <span>约 60 分钟</span>
+                            <span>热身 + 拉伸</span>
+                        </div>
+                    </div>
+                    <div class="card-bottom">点击查看完整计划</div>
+                `;
+                card.addEventListener("click", () => openModal(item));
+                grid.appendChild(card);
+            });
+        }
+
+        function buildModalBody(item) {
+            const exCards = item.exercises.map((e) => {
+                const gifHtml = e.gif
+                    ? `<img class="ex-gif" src="${e.gif}" alt="${e.name}" onclick="event.stopPropagation(); openImgModal('${e.gif}')">`
+                    : "";
+                return `
+                <div class="ex-card">
+                    <div class="ex-card-head">${e.name}</div>
+                    <div class="ex-card-body">
+                        <div class="ex-card-info">
+                            <div class="ex-row"><span class="ex-label">组数 × 次数</span><span class="ex-value">${e.sets}</span></div>
+                            <div class="ex-row"><span class="ex-label">组间休息</span><span class="ex-value">${e.rest}</span></div>
+                        </div>
+                        ${gifHtml}
+                    </div>
+                    <div class="ex-tip">要点：${e.tip}</div>
+                </div>
+            `;
+            }).join("");
+
+            const wsItem = (w) => {
+                const img = w.gif
+                    ? `<img class="ws-gif" src="${w.gif}" alt="${w.t}" onclick="event.stopPropagation(); openImgModal('${w.gif}')">`
+                    : "";
+                return `<li>${img}<span>${w.t}</span></li>`;
+            };
+            const warmupLis = item.warmup.map(wsItem).join("");
+            const stretchLis = item.stretch.map(wsItem).join("");
+
+            return `
+                <section>
+                    <div class="section-title">热身（5 分钟）<span class="badge" style="background:#16a34a">WARM UP</span></div>
+                    <ul class="warmup-list" style="--dot:#16a34a">${warmupLis}</ul>
+                </section>
+                <section>
+                    <div class="section-title">力量训练（45-50 分钟）<span class="badge" style="background:#e94560">WORKOUT</span></div>
+                    ${exCards}
+                </section>
+                <section>
+                    <div class="section-title">拉伸（5-10 分钟）<span class="badge" style="background:#9333ea">COOL DOWN</span></div>
+                    <ul class="stretch-list">${stretchLis}</ul>
+                </section>
+            `;
+        }
+
+        function openModal(item) {
+            mDay.textContent = item.day;
+            mTitle.textContent = item.title;
+            mSub.textContent = item.sub;
+            mBody.innerHTML = buildModalBody(item);
+            modal.classList.add("show");
+        }
+
+        function closeModal(e) {
+            if (e.target === modal || e.target.classList.contains("modal-close")) {
+                modal.classList.remove("show");
+            }
+        }
+
+        function openImgModal(src) {
+            imgModalImg.src = src;
+            imgModal.classList.add("show");
+        }
+
+        function closeImgModal(e) {
+            if (e.target === imgModal || e.target.classList.contains("img-close")) {
+                imgModal.classList.remove("show");
+                imgModalImg.src = "";
+            }
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                modal.classList.remove("show");
+                imgModal.classList.remove("show");
+                imgModalImg.src = "";
+            }
+        });
+
+        renderCards();
+    </script>
+</body>
+</html>
